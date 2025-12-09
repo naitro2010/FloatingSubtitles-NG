@@ -15,7 +15,14 @@ namespace ImGui
 		float zVal;
 		RE::Main::WorldRootCamera()->WorldPtToScreenPt3(worldLocIn, screenLocOut.x, screenLocOut.y, zVal, 1e-5f);
 
-		const ImVec2 rect = ImGui::GetIO().DisplaySize;
+		ImGuiIO& io = ImGui::GetIO();
+		ImVec2 rect = io.DisplaySize;
+		bool isVR = (REL::Module::get().GetRuntime() == REL::Module::Runtime::VR);
+		if (isVR) {
+			rect.x *= io.DisplayFramebufferScale.x;
+			rect.y *= io.DisplayFramebufferScale.y;
+		}
+
 		screenLocOut.x = rect.x * screenLocOut.x;
 		screenLocOut.y = rect.y * (1.0f - screenLocOut.y);
 

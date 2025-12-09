@@ -12,7 +12,7 @@ namespace ImGui::Renderer
 			func();
 
 			if (const auto renderer = RE::BSGraphics::Renderer::GetSingleton()) {
-				const auto swapChain = reinterpret_cast<IDXGISwapChain*>(renderer->GetRuntimeData().renderWindows[0].swapChain);
+				const auto swapChain = reinterpret_cast<IDXGISwapChain*>(renderer->GetRuntimeData().renderWindows->swapChain);
 				if (!swapChain) {
 					logger::error("couldn't find swapChain");
 					return;
@@ -73,6 +73,7 @@ namespace ImGui::Renderer
 				auto& io = ImGui::GetIO();
 				io.DisplaySize.x = static_cast<float>(screenSize.width);
 				io.DisplaySize.y = static_cast<float>(screenSize.height);
+
 			}
 			ImGui::NewFrame();
 			{

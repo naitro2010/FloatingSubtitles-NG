@@ -342,7 +342,7 @@ void Manager::UpdateSubtitleInfo(RE::SubtitleManager* a_manager)
 				}
 
 				if (ref->IsPlayerRef()) {
-					if (auto pcCamera = RE::PlayerCamera::GetSingleton(); pcCamera && pcCamera->IsInFirstPerson()) {
+					if (auto pcCamera = RE::PlayerCamera::GetSingleton(); pcCamera && (pcCamera->IsInFirstPerson() || REL::Module::IsVR())) {
 						BuildOffscreenSubtitle(ref, subInfo.subtitle);
 						continue;
 					}
