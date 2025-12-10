@@ -78,6 +78,22 @@ namespace ImGui::Renderer
 
 			}
 			ImGui::NewFrame();
+			ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
+		    if (bd && bd->pd3dDevice) 
+			{
+				D3D11_RASTERIZER_DESC desc;
+				ZeroMemory(&desc, sizeof(desc));
+				desc.FillMode = D3D11_FILL_SOLID;
+				desc.CullMode = D3D11_CULL_NONE;
+				desc.ScissorEnable = false;
+				desc.DepthClipEnable = false;
+				if (bd->pRasterizerState)
+				{
+					bd->pRasterizerState->Release();
+					bd->pRasterizerState = nullptr;
+				}				
+				bd->pd3dDevice->CreateRasterizerState(&desc, &bd->pRasterizerState);
+			}
 			{
 				// disable windowing
 				GImGui->NavWindowingTarget = nullptr;
@@ -86,25 +102,8 @@ namespace ImGui::Renderer
 			}
 			ImGui::EndFrame();
 			ImGui::Render();
-			
-			ID3D11DepthStencilState * originalState;
-			unsigned int stencilRef;
-			D3D11_DEPTH_STENCIL_DESC alwaysOnTopStencil;
-			memset(&alwaysOnTopStencil,0, sizeof(alwaysOnTopStencil));			
-			if (const auto renderer = RE::BSGraphics::Renderer::GetSingleton()) {
-					auto device = reinterpret_cast<ID3D11Device*>(renderer->GetRuntimeData().forwarder);
-					auto context = reinterpret_cast<ID3D11DeviceContext*>(renderer->GetRuntimeData().context);
-					context->OMGetDepthStencilState(&originalState,&stencilRef);
-					alwaysOnTopStencil.DepthEnable = FALSE;
-					alwaysOnTopStencil.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-					alwaysOnTopStencil.DepthFunc = D3D11_COMPARISON_LESS;
-					alwaysOnTopStencil.StencilEnable = FALSE;
-					ID3D11DepthStencilState* pDepthState;
-					device->CreateDepthStencilState(&alwaysOnTopStencil, &pDepthState);
-					context->OMSetDepthStencilState(pDepthState,stencilRef);
-			}
+
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-			context->OMSetDepthStencilState(originalState,stencilRef);
 
 			func(a_menu);
 		}
