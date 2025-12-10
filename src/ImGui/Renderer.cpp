@@ -95,7 +95,7 @@ namespace ImGui::Renderer
 
 			}
 			ImGui::NewFrame();
-			ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
+			ImGui_ImplDX11_Data* bd = ImGui::GetCurrentContext() ? ((ImGui_ImplDX11_Data*)ImGui::GetIO().BackendRendererUserData) : nullptr;
 		    if (bd && bd->pd3dDevice) 
 			{
 				D3D11_RASTERIZER_DESC desc;
